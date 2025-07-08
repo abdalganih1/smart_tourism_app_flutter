@@ -208,10 +208,10 @@ class _TouristSiteDetailsPageState extends State<TouristSiteDetailsPage> {
     if (_currentUser == null || _site?.id == null) return;
     try {
       final interactionRepo = Provider.of<InteractionRepository>(context, listen: false);
-      final status = await interactionRepo.checkFavoriteStatus(TargetTypes.touristSite, _site!.id!);
+      final favoritesResponse = await interactionRepo.getMyFavorites();
       if (mounted) {
         setState(() {
-          _isFavorited = status['is_favorited'];
+          _isFavorited = favoritesResponse.data.any((fav) => fav.targetType == TargetTypes.touristSite && fav.targetId == _site!.id!);
         });
       }
     } catch (e) {
@@ -292,6 +292,11 @@ class _TouristSiteDetailsPageState extends State<TouristSiteDetailsPage> {
     } catch (e) {
       print('Error fetching ratings: $e');
       // Could show a snackbar or small error message within the ratings section
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'فشل تحميل التقييمات: ${e.toString()}';
+        });
+      }
     }
   }
 
@@ -383,6 +388,11 @@ class _TouristSiteDetailsPageState extends State<TouristSiteDetailsPage> {
     } catch (e) {
       print('Error fetching comments: $e');
       // Could show a snackbar or small error message within the comments section
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'فشل تحميل التعليقات: ${e.toString()}';
+        });
+      }
     }
   }
 
@@ -482,6 +492,11 @@ class _TouristSiteDetailsPageState extends State<TouristSiteDetailsPage> {
     } catch (e) {
       print('Error fetching experiences: $e');
       // Handle error display if necessary
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'فشل تحميل التجارب: ${e.toString()}';
+        });
+      }
     }
   }
 

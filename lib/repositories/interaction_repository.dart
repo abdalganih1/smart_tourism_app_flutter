@@ -47,11 +47,30 @@ class InteractionRepository {
     return PaginatedResponse<Favorite>.fromJson(response, (json) => Favorite.fromJson(json));
   }
 
-  Future<Map<String, dynamic>> checkFavoriteStatus(String targetType, int targetId) async {
-    // FIX: استخدم الدالة المساعدة لتحويل targetType إلى مسار API صحيح
-    final apiPath = _mapTargetTypeToApiPath(targetType);
-    final response = await _apiService.get('/$apiPath/$targetId/is-favorited', protected: true);
-    return response as Map<String, dynamic>;
+  /// Checks the favorite status of a single item.
+  Future<bool> checkFavoriteStatus(String targetType, int targetId) async {
+    try {
+      final response = await _apiService.post(
+        '/favorites/check',
+        {
+          'items': [
+            {'target_type': targetType, 'target_id': targetId}
+          ]
+        },
+        protected: true,
+      );
+
+      // The response is expected to be a map like: {'TouristSite_1': true}
+      if (response is Map<String, dynamic> && response.isNotEmpty) {
+        // We don't know the exact key, but it should be the first and only one.
+        return response.values.first as bool? ?? false;
+      }
+      return false;
+    } catch (e) {
+      // If the check fails (e.g., network error, 404), assume it's not favorited.
+      print('Could not check favorite status for $targetType:$targetId. Error: $e');
+      return false;
+    }
   }
 
   // --- Ratings ---

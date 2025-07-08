@@ -222,8 +222,8 @@ class _MainScreenState extends State<MainScreen> {
                          child: CircleAvatar(
                             radius: 29,
                             // Dynamic user profile picture
-                            backgroundImage: (_loggedInUser?.profile?.profilePictureUrl != null && _loggedInUser!.profile!.profilePictureUrl!.isNotEmpty)
-                                ? NetworkImage(_loggedInUser!.profile!.profilePictureUrl!) as ImageProvider
+                            backgroundImage: (_loggedInUser?.profile?.imageUrl != null && _loggedInUser!.profile!.imageUrl!.isNotEmpty)
+                                ? NetworkImage(_loggedInUser!.profile!.imageUrl!) as ImageProvider
                                 : const AssetImage('assets/user.png'), // Default asset image
                             backgroundColor: kSurfaceColor,
                             onBackgroundImageError: (exception, stackTrace) {
