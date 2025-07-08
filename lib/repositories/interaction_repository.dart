@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:smart_tourism_app/utils/api_exceptions.dart';
 import '../models/favorite.dart';
 import '../models/rating.dart';
 import '../models/comment.dart';
@@ -20,16 +21,18 @@ class InteractionRepository {
   // This assumes the API paths are lowercase and hyphen-separated (kebab-case)
   String _mapTargetTypeToApiPath(String targetType) {
     switch (targetType) {
-      case TargetTypes.touristSite:
+      case 'TouristSite':
         return 'tourist-sites';
-      case TargetTypes.product:
+      case 'Product':
         return 'products';
-      case TargetTypes.article:
+      case 'Article':
         return 'articles';
-      case TargetTypes.hotel:
+      case 'Hotel':
         return 'hotels';
-      case TargetTypes.siteExperience: // If you fetch experiences of experiences (unlikely)
+      case 'SiteExperience':
         return 'site-experiences';
+      case 'TouristActivity':
+        return 'tourist-activities';
       default:
         // Fallback for unknown types, or throw an error if an unknown type is critical
         return targetType.toLowerCase(); // Basic lowercase conversion
