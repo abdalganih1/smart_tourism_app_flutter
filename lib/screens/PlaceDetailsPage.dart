@@ -120,14 +120,23 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
   Future<void> _checkFavoriteStatus() async {
     try {
       final interactionRepo = Provider.of<InteractionRepository>(context, listen: false);
-      final status = await interactionRepo.checkFavoriteStatus(TargetTypes.touristSite, widget.siteId);
-      setState(() {
-        _isFavorited = status['is_favorited'] ?? false;
-        _favoriteId = status['favorite_id'];
-      });
+      final isFavorited = await interactionRepo.checkFavoriteStatus(TargetTypes.touristSite, widget.siteId);
+      if (mounted) {
+        setState(() {
+          _isFavorited = isFavorited;
+          // Note: The new checkFavoriteStatus returns a boolean directly.
+          // We no longer get the favorite_id from this specific endpoint.
+          // The _favoriteId will be set by the _toggleFavorite response if needed.
+        });
+      }
     } catch (e) {
       print('Error checking favorite status: $e');
-      // Don't block UI for this error, just log it
+      // Don't block UI for this error, just log it. Assume not favorited on error.
+      if (mounted) {
+        setState(() {
+          _isFavorited = false;
+        });
+      }
     }
   }
 
