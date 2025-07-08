@@ -1,10 +1,12 @@
-The error "Unknown column 'site_experiences.tourist_site_id' in 'WHERE'" indicates a database schema mismatch in your Laravel backend. The `site_experiences` table is likely designed with a polymorphic relationship (using `experiencable_id` and `experiencable_type`) rather than a direct `tourist_site_id` foreign key.
+The error "Unknown column 'site_experiences.tourist_site_id' in 'WHERE'" persists because your Laravel backend's `TouristSite` model still defines the `experiences` relationship as a `hasMany` relationship, which expects a `tourist_site_id` foreign key in the `site_experiences` table. However, the error indicates this column does not exist, implying `site_experiences` uses a polymorphic relationship (e.g., `experiencable_id` and `experiencable_type`).
 
-To fix this, you need to:
+To fix this, you need to modify your Laravel backend:
 
-1.  **Verify `site_experiences` table migration:** Ensure it uses `$table->morphs('experiencable');`.
-2.  **Update `app/Models/TouristSite.php`:** Add a `morphMany` relationship:
+1.  **Update `app/Models/TouristSite.php`:**
+    Change the `experiences` relationship from `hasMany` to `morphMany`:
     ```php
+    // In app/Models/TouristSite.php
+
     use App\Models\SiteExperience;
 
     public function experiences()
@@ -12,24 +14,22 @@ To fix this, you need to:
         return $this->morphMany(SiteExperience::class, 'experiencable');
     }
     ```
-3.  **Update `app/Models/SiteExperience.php`:** Add a `morphTo` relationship:
+
+2.  **Update `app/Models/SiteExperience.php`:**
+    Ensure the `SiteExperience` model has a `morphTo` relationship:
     ```php
+    // In app/Models/SiteExperience.php
+
     public function experiencable()
     {
         return $this->morphTo();
     }
     ```
-4.  **Update `app/Http/Controllers/Api/TouristSiteController.php`:** Modify the `experiences` method:
-    ```php
-    use App\Http\Resources\SiteExperienceResource;
 
-    public function experiences(TouristSite $touristSite)
-    {
-        $experiences = $touristSite->experiences()
-                                   ->with('user.profile')
-                                   ->orderBy('created_at', 'desc')
-                                   ->paginate(10);
-        return SiteExperienceResource::collection($experiences);
-    }
+3.  **Verify `site_experiences` table migration:**
+    Confirm that your `site_experiences` table migration includes `experiencable_id` and `experiencable_type` columns, typically added like this:
+    ```php
+    $table->morphs('experiencable');
     ```
-Please apply these changes to your Laravel backend.
+
+Please apply these changes to your Laravel backend project.
