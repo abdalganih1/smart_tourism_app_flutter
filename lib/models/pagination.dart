@@ -18,6 +18,15 @@ class PaginatedResponse<T> {
       extra: json['extra'] as Map<String, dynamic>?,
     );
   }
+
+  // Factory for creating an empty response, useful for handling errors gracefully.
+  factory PaginatedResponse.empty() {
+    return PaginatedResponse<T>(
+      data: [],
+      meta: Meta.empty(),
+      extra: null,
+    );
+  }
 }
 
 class Meta {
@@ -51,6 +60,19 @@ class Meta {
       perPage: json['per_page'],
       to: json['to'],
       total: json['total'],
+    );
+  }
+
+  factory Meta.empty() {
+    return Meta(
+      currentPage: 1,
+      from: 0,
+      lastPage: 1,
+      links: [],
+      path: '',
+      perPage: 0,
+      to: 0,
+      total: 0,
     );
   }
 }

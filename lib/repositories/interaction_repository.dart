@@ -88,10 +88,16 @@ class InteractionRepository {
   }
 
   Future<PaginatedResponse<Rating>> getRatingsForTarget(String targetType, int targetId, {int page = 1}) async {
-    // FIX: استخدم الدالة المساعدة لتحويل targetType إلى مسار API صحيح
-    final apiPath = _mapTargetTypeToApiPath(targetType);
-    final response = await _apiService.get('/$apiPath/$targetId/ratings', queryParameters: {'page': page.toString()}, protected: false);
-    return PaginatedResponse<Rating>.fromJson(response, (json) => Rating.fromJson(json));
+    try {
+      final apiPath = _mapTargetTypeToApiPath(targetType);
+      final response = await _apiService.get('/$apiPath/$targetId/ratings', queryParameters: {'page': page.toString()}, protected: false);
+      return PaginatedResponse<Rating>.fromJson(response, (json) => Rating.fromJson(json));
+    } on ApiException catch (e) {
+      if (e.statusCode == 404) {
+        return PaginatedResponse.empty();
+      }
+      rethrow;
+    }
   }
 
   // --- Comments ---
@@ -109,23 +115,42 @@ class InteractionRepository {
   }
 
   Future<PaginatedResponse<Comment>> getCommentsForTarget(String targetType, int targetId, {int page = 1}) async {
-    // FIX: استخدم الدالة المساعدة لتحويل targetType إلى مسار API صحيح
-    final apiPath = _mapTargetTypeToApiPath(targetType);
-    final response = await _apiService.get('/$apiPath/$targetId/comments', queryParameters: {'page': page.toString()}, protected: false);
-    return PaginatedResponse<Comment>.fromJson(response, (json) => Comment.fromJson(json));
+    try {
+      final apiPath = _mapTargetTypeToApiPath(targetType);
+      final response = await _apiService.get('/$apiPath/$targetId/comments', queryParameters: {'page': page.toString()}, protected: false);
+      return PaginatedResponse<Comment>.fromJson(response, (json) => Comment.fromJson(json));
+    } on ApiException catch (e) {
+      if (e.statusCode == 404) {
+        return PaginatedResponse.empty();
+      }
+      rethrow;
+    }
   }
 
   Future<PaginatedResponse<Comment>> getCommentReplies(int commentId, {int page = 1}) async {
-    final response = await _apiService.get('/comments/$commentId/replies', queryParameters: {'page': page.toString()}, protected: false);
-    return PaginatedResponse<Comment>.fromJson(response, (json) => Comment.fromJson(json));
+    try {
+      final response = await _apiService.get('/comments/$commentId/replies', queryParameters: {'page': page.toString()}, protected: false);
+      return PaginatedResponse<Comment>.fromJson(response, (json) => Comment.fromJson(json));
+    } on ApiException catch (e) {
+      if (e.statusCode == 404) {
+        return PaginatedResponse.empty();
+      }
+      rethrow;
+    }
   }
 
   // --- Site Experiences ---
   Future<PaginatedResponse<SiteExperience>> getExperiencesForTarget(String targetType, int targetId, {int page = 1}) async {
-    // FIX: استخدم الدالة المساعدة لتحويل targetType إلى مسار API صحيح
-    final apiPath = _mapTargetTypeToApiPath(targetType);
-    final response = await _apiService.get('/$apiPath/$targetId/experiences', queryParameters: {'page': page.toString()}, protected: false);
-    return PaginatedResponse<SiteExperience>.fromJson(response, (json) => SiteExperience.fromJson(json));
+    try {
+      final apiPath = _mapTargetTypeToApiPath(targetType);
+      final response = await _apiService.get('/$apiPath/$targetId/experiences', queryParameters: {'page': page.toString()}, protected: false);
+      return PaginatedResponse<SiteExperience>.fromJson(response, (json) => SiteExperience.fromJson(json));
+    } on ApiException catch (e) {
+      if (e.statusCode == 404) {
+        return PaginatedResponse.empty();
+      }
+      rethrow;
+    }
   }
 
   Future<dynamic> addExperience(Map<String, dynamic> data, {File? photoFile}) async {
