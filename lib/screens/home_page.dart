@@ -5,6 +5,9 @@ import 'package:intl/intl.dart'
     as intl; // لإدارة التواريخ - استخدام اسم مستعار لتجنب تضارب TextDirection
 import 'package:flutter_rating_bar/flutter_rating_bar.dart'; // لتصنيف الفنادق
 
+import 'package:smart_tourism_app/repositories/auth_repository.dart';
+import 'package:smart_tourism_app/models/user.dart';
+
 // استيراد الشاشات التي قد تنتقل إليها
 import 'package:smart_tourism_app/screens/TouristSiteDetailsPage.dart'; // TouristSiteDetailsPage موجودة هنا
 import 'package:smart_tourism_app/screens/HotelsPage.dart';
@@ -362,8 +365,9 @@ class _HomePageState extends State<HomePage> {
   // --- NEW Home Header Widget ---
   Widget _buildHomeHeader(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    // TODO: Replace with dynamic user name from AuthRepository or state management
-    final String userName = 'أحمد';
+    final authRepo = Provider.of<AuthRepository>(context, listen: false);
+    final User? user = authRepo.currentUser;
+    final String userName = user?.profile?.firstName ?? user?.username ?? 'Guest';
 
     return Container(
       padding: const EdgeInsets.only(top: 16, bottom: 20, left: 20, right: 20),

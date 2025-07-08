@@ -9,6 +9,7 @@ import 'package:smart_tourism_app/models/product.dart'; // To fetch products and
 import 'package:smart_tourism_app/models/user.dart'; // User model (for seller details)
 import 'package:smart_tourism_app/models/user_profile.dart'; // UserProfile model
 import 'package:smart_tourism_app/models/pagination.dart'; // Pagination model
+import 'package:smart_tourism_app/config/config.dart';
 
 // تأكد من أن هذه الألوان معرفة ومتاحة، يفضل أن تكون في ملف ثوابت مشترك
 const Color kPrimaryColor = Color(0xFF005B96);
@@ -359,10 +360,9 @@ class CraftsmanCard extends StatelessWidget {
 
     // Placeholder image logic: Use profile_picture_url or default asset
     String? imageUrl = craftsman.profile?.profilePictureUrl;
-    // You might need to prepend base URL if profilePictureUrl is relative
-    // if (imageUrl != null && !imageUrl.startsWith('http')) {
-    //   imageUrl = Config.storageUrl + imageUrl; // Make sure Config is imported
-    // }
+    if (imageUrl != null && !imageUrl.startsWith('http')) {
+      imageUrl = Config.httpUrl + imageUrl; 
+    }
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),

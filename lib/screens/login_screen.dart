@@ -139,6 +139,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
                 child: const Text('Don\'t have an account? Register'),
               ),
+              // Quick Login Button for testing
+              ElevatedButton(
+                onPressed: () {
+                  _loginController.text = 'tourist1@app.com';
+                  _passwordController.text = 'password';
+                  _login();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey, // A different color to distinguish
+                ),
+                child: const Text('Quick Login (Test)'),
+              ),
             ],
           ),
         ),

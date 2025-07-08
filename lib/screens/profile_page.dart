@@ -11,6 +11,7 @@ import 'package:smart_tourism_app/models/user_profile.dart'; // UserProfile mode
 import 'package:smart_tourism_app/utils/api_exceptions.dart'; // For error handling
 import 'package:smart_tourism_app/screens/edit_profile_page.dart'; // الصفحة لتعديل البيانات النصية
 import 'package:smart_tourism_app/screens/change_password_page.dart'; // الصفحة لتغيير كلمة المرور
+import 'package:smart_tourism_app/config/config.dart';
 
 // تأكد من أن هذه الألوان معرفة ومتاحة، يفضل أن تكون في ملف ثوابت مشترك
 const Color kPrimaryColor = Color(0xFF005B96);
@@ -299,7 +300,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   radius: 60,
                                   backgroundColor: kSurfaceColor,
                                   backgroundImage: (_currentUser!.profile?.imageUrl != null && _currentUser!.profile!.imageUrl!.isNotEmpty)
-                                      ? NetworkImage(_currentUser!.profile!.imageUrl!) as ImageProvider
+                                      ? NetworkImage(Config.httpUrl + _currentUser!.profile!.imageUrl!) as ImageProvider
                                       : const AssetImage('assets/user.png'), // Default asset image
                                   onBackgroundImageError: (exception, stackTrace) {
                                     print('Error loading profile picture: $exception');

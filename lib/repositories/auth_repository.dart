@@ -7,8 +7,11 @@ import '../services/api_service.dart';
 
 class AuthRepository {
   final ApiService _apiService;
+  User? _currentUser;
 
   AuthRepository(this._apiService);
+
+  User? get currentUser => _currentUser;
 
   Future<User> login(String login, String password, {String? deviceName}) async {
     final response = await _apiService.post(
@@ -18,7 +21,8 @@ class AuthRepository {
     );
     if (response is Map<String, dynamic> && response.containsKey('token') && response.containsKey('user')) {
       await _apiService.saveToken(response['token'] as String);
-      return User.fromJson(response['user'] as Map<String, dynamic>);
+      _currentUser = User.fromJson(response['user'] as Map<String, dynamic>);
+      return _currentUser!;
     } else {
       // FIX: استخدام بناء ApiException الصحيح
       throw ApiException(400, 'Invalid login response format.');
@@ -33,7 +37,8 @@ class AuthRepository {
     );
     if (response is Map<String, dynamic> && response.containsKey('token') && response.containsKey('user')) {
       await _apiService.saveToken(response['token'] as String);
-      return User.fromJson(response['user'] as Map<String, dynamic>);
+      _currentUser = User.fromJson(response['user'] as Map<String, dynamic>);
+      return _currentUser!;
     } else {
       // FIX: استخدام بناء ApiException الصحيح
       throw ApiException(400, 'Invalid registration response format.');
@@ -47,6 +52,7 @@ class AuthRepository {
       print('Logout API call failed: $e');
     } finally {
       await _apiService.removeToken();
+      _currentUser = null;
     }
   }
 
@@ -61,11 +67,13 @@ class AuthRepository {
       
       // Based on your previous logs, /user wraps the object in a 'data' key
       if (response is Map<String, dynamic> && response.containsKey('data')) {
-        return User.fromJson(response['data'] as Map<String, dynamic>);
+        _currentUser = User.fromJson(response['data'] as Map<String, dynamic>);
+        return _currentUser;
       }
       // It's also possible /user returns the user object directly (less common with resources)
       else if (response is Map<String, dynamic>) {
-        return User.fromJson(response);
+        _currentUser = User.fromJson(response);
+        return _currentUser;
       }
       else {
         throw UnauthorizedException('Invalid user data format from /user endpoint.');

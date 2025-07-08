@@ -160,7 +160,7 @@ class InteractionRepository {
     if (photoFile != null) {
       final stringFields = data.map((key, value) => MapEntry(key, value.toString()));
       final response = await _apiService.postMultipart(
-        '/experiences',
+        '/my-experiences',
         stringFields,
         file: http.MultipartFile.fromBytes(
           'photo',
@@ -171,7 +171,7 @@ class InteractionRepository {
       );
       return response;
     } else {
-      final response = await _apiService.post('/experiences', data, protected: true);
+      final response = await _apiService.post('/my-experiences', data, protected: true);
       return response;
     }
   }
