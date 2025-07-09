@@ -98,16 +98,26 @@ class ApiService {
     final uri = Uri.parse(Config.baseUrl + path);
     final headers = protected ? await _getProtectedHeaders() : Config.headers;
 
+    // Modify headers for form-urlencoded content type
+    headers['Content-Type'] = 'application/x-www-form-urlencoded';
+
     try {
+      // The body should be a Map<String, String> for this content type
       final response = await http.post(
         uri,
         headers: headers,
-        body: json.encode(body), // Encode body to JSON
+        body: body, // Send body directly without json.encode
       );
       // طباعة نص الاستجابة (JSON)
       print('POST $path | Status: ${response.statusCode} | Body: ${response.body}');
+      
+      // Revert Content-Type to default for subsequent requests that might expect JSON
+      headers['Content-Type'] = 'application/json'; 
+
       return _handleResponse(response);
     } catch (e) {
+      // Revert Content-Type in case of error too
+      headers['Content-Type'] = 'application/json';
       throw NetworkException("Failed to connect to the server: ${e.toString()}");
     }
   }

@@ -6,6 +6,7 @@ import 'package:smart_tourism_app/repositories/auth_repository.dart'; // Import 
 import 'package:smart_tourism_app/repositories/user_repository.dart'; // Import user repo for user data in drawer (Optional, if not handled by auth_repository)
 import 'package:smart_tourism_app/screens/HotelsPage.dart';
 import 'package:smart_tourism_app/screens/articles_page.dart';
+import 'package:smart_tourism_app/screens/shopping_cart_screen.dart';
 
 
 // Import all necessary screens/pages
@@ -42,6 +43,7 @@ const Color kErrorColor = Color(0xFFE74C3C); // Alizarin Red
 
 // --- Main Application Screen (Layout mostly unchanged, relies on Theme) ---
 class MainScreen extends StatefulWidget {
+  static const routeName = '/main';
   const MainScreen({super.key});
 
   @override
@@ -194,6 +196,13 @@ class _MainScreenState extends State<MainScreen> {
              ),
            ),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.shopping_cart_outlined),
+              tooltip: 'Shopping Cart',
+              onPressed: () {
+                Navigator.of(context).pushNamed(ShoppingCartScreen.routeName);
+              },
+            ),
             IconButton( // Keep notifications
               icon: const Icon(Icons.notifications_none_rounded),
               tooltip: 'الإشعارات',
@@ -275,7 +284,7 @@ _buildDrawerItem(
   icon: Icons.shopping_bag_outlined,
   onTap: () => _navigateTo(context, const ProductsPage()),
 ),
-                                  _buildDrawerItem(context: context, title: ' الوجهات السياحية', icon: Icons.edit_calendar_outlined, onTap: () => _navigateTo(context,  const TouristSitesListPage())),
+                                  _buildDrawerItem(context: context, title: ' ا��وجهات السياحية', icon: Icons.edit_calendar_outlined, onTap: () => _navigateTo(context,  const TouristSitesListPage())),
 _buildDrawerItem(context: context, title: ' الفنادق ', icon: Icons.edit_calendar_outlined, onTap: () => _navigateTo(context, const HotelsPage())), // <<<--- تم فك تعليقها
 // <<<--- تم فك تعليقها
                  const Divider(indent: 20, endIndent: 20, thickness: 0.5),

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:smart_tourism_app/main.dart';
 
 import 'package:smart_tourism_app/repositories/tourism_repository.dart';
+import 'package:smart_tourism_app/repositories/shopping_cart_repository.dart'; // <-- Import cart repo
 import 'package:smart_tourism_app/utils/api_exceptions.dart';
 import 'package:smart_tourism_app/models/product.dart';
 
@@ -30,6 +31,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   bool _isLoading = false;
   String? _errorMessage;
   int _quantity = 1;
+  bool _isAddingToCart = false; // <-- State for add to cart button
 
   @override
   void initState() {
@@ -68,6 +70,39 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   void _decrementQuantity() {
     if (_quantity > 1) {
       setState(() { _quantity--; });
+    }
+  }
+
+  Future<void> _addToCart() async {
+    if (_product == null) return;
+
+    setState(() { _isAddingToCart = true; });
+
+    try {
+      final cartRepo = Provider.of<ShoppingCartRepository>(context, listen: false);
+      await cartRepo.addItemToCart(_product!.id, _quantity);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('تمت إضافة $_quantity من "${_product!.name}" إلى السلة.'),
+            backgroundColor: kSuccessColor,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('فشل في إضافة المنتج: ${e.toString()}'),
+            backgroundColor: kErrorColor,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() { _isAddingToCart = false; });
+      }
     }
   }
 
@@ -210,25 +245,19 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         ],
       ),
       child: ElevatedButton(
-        onPressed: _product!.isAvailable ? () {
-          // TODO: Implement Add to Cart logic
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('تمت إضافة $_quantity من "${_product!.name}" إلى السلة.'),
-              backgroundColor: kSuccessColor,
-            ),
-          );
-        } : null,
+        onPressed: _product!.isAvailable && !_isAddingToCart ? _addToCart : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: kPrimaryColor,
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 50),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
-        child: Text(
-          _product!.isAvailable ? 'أضف إلى السلة' : 'غير متوفر حالياً',
-          style: textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
+        child: _isAddingToCart
+            ? const CircularProgressIndicator(color: Colors.white)
+            : Text(
+                _product!.isAvailable ? 'أضف إلى السلة' : 'غير متوفر حالياً',
+                style: textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
       ),
     );
   }

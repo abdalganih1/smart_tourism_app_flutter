@@ -10,13 +10,34 @@ class ShoppingCartRepository {
 
   Future<List<ShoppingCartItem>> getMyCartItems() async {
     final response = await _apiService.get('/cart', protected: true); // Protected endpoint
-    return (response as List).map((item) => ShoppingCartItem.fromJson(item)).toList();
+    if (response is Map<String, dynamic> && response.containsKey('data')) {
+      final data = response['data'] as List;
+      return data.map((item) => ShoppingCartItem.fromJson(item)).toList();
+    } else {
+      // Handle cases where the response is not in the expected format
+      throw Exception('Invalid response format for cart items.');
+    }
   }
 
   Future<ShoppingCartItem> addItemToCart(int productId, int quantity) async {
-     // API endpoint /cart/add expects product_id and quantity
-    final response = await _apiService.post('/cart/add', {'product_id': productId, 'quantity': quantity}, protected: true); // Protected endpoint
-    return ShoppingCartItem.fromJson(response);
+    // API endpoint /cart/add expects product_id and quantity
+    // Let's send data as String values to be safe for form-urlencoded content type
+    final body = {
+      'product_id': productId.toString(),
+      'quantity': quantity.toString(),
+    };
+    final response = await _apiService.post('/cart/add', body, protected: true); // Protected endpoint
+    
+    // The response from a successful add might be the new item or a success message.
+    // Assuming it returns the newly created cart item.
+    if (response is Map<String, dynamic>) {
+      // If the new item is nested under a 'data' key
+      if (response.containsKey('data')) {
+        return ShoppingCartItem.fromJson(response['data']);
+      }
+      return ShoppingCartItem.fromJson(response);
+    }
+    throw Exception('Failed to parse response after adding item to cart.');
   }
 
   Future<ShoppingCartItem> updateCartItemQuantity(int cartItemId, int quantity) async {

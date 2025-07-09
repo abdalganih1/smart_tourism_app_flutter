@@ -11,15 +11,16 @@ import 'package:smart_tourism_app/repositories/booking_repository.dart';
 import 'package:smart_tourism_app/repositories/shopping_cart_repository.dart';
 import 'package:smart_tourism_app/repositories/interaction_repository.dart';
 import 'package:smart_tourism_app/repositories/user_repository.dart';
-import 'package:smart_tourism_app/repositories/hotel_repository.dart'; // <--- Add this import
+import 'package:smart_tourism_app/repositories/hotel_repository.dart';
+
+import 'package:smart_tourism_app/screens/shopping_cart_screen.dart'; // <-- Import Shopping Cart Screen
 
 // Import core screens
 import 'package:smart_tourism_app/screens/login_screen.dart';
+import 'package:smart_tourism_app/screens/register_screen.dart'; // <-- Import Register Screen
 import 'package:smart_tourism_app/screens/main_screen.dart';
 
-// Import all pages that might be navigated to directly (e.g., from drawer)
-import 'package:smart_tourism_app/screens/home_page.dart';
-import 'package:smart_tourism_app/screens/favorites_page.dart';
+// Import other pages
 import 'package:smart_tourism_app/screens/profile_page.dart';
 import 'package:smart_tourism_app/screens/Invoices.dart';
 import 'package:smart_tourism_app/screens/Planner.dart';
@@ -30,10 +31,8 @@ import 'package:smart_tourism_app/screens/evaluations.dart';
 import 'package:smart_tourism_app/screens/events.dart';
 import 'package:smart_tourism_app/screens/notifications_page.dart';
 import 'package:smart_tourism_app/screens/city_guide_page.dart';
-import 'package:smart_tourism_app/repositories/user_repository.dart'; // <--- تأكد من هذا الاستيراد
 
-
-// --- Global Theme Colors (Moved here for app-wide access) ---
+// --- Global Theme Colors ---
 const Color kPrimaryColor = Color(0xFF005B96);
 const Color kAccentColor = Color(0xFFF7931E);
 const Color kBackgroundColor = Color(0xFFFDFDFD);
@@ -44,9 +43,8 @@ const Color kDividerColor = Color(0xFFEAEAEA);
 const Color kSuccessColor = Color(0xFF2ECC71);
 const Color kErrorColor = Color(0xFFE74C3C);
 
-// --- Global Theme Data Function (Moved here for app-wide application) ---
+// --- Global Theme Data Function ---
 ThemeData _buildRedesignedTheme() {
-  // ... (No changes here, it's the same theme definition) ...
   return ThemeData(
     fontFamily: 'Cairo',
     primaryColor: kPrimaryColor,
@@ -183,7 +181,6 @@ void main() {
     MultiProvider(
       providers: [
         Provider<ApiService>(create: (_) => ApiService()),
-
         ProxyProvider<ApiService, AuthRepository>(
           update: (_, apiService, __) => AuthRepository(apiService),
         ),
@@ -202,10 +199,9 @@ void main() {
         ProxyProvider<ApiService, UserRepository>(
           update: (_, apiService, __) => UserRepository(apiService),
         ),
-        ProxyProvider<ApiService, HotelRepository>( // <--- Add HotelRepository here
+        ProxyProvider<ApiService, HotelRepository>(
           update: (_, apiService, __) => HotelRepository(apiService),
         ),
-        
       ],
       child: const MyApp(),
     ),
@@ -222,11 +218,14 @@ class MyApp extends StatelessWidget {
       title: 'Smart Tourism App',
       theme: _buildRedesignedTheme(),
       
-      initialRoute: '/login',
+      initialRoute: LoginScreen.routeName, // <-- Set initial route to login
 
       routes: {
-        '/login': (context) => const LoginScreen(),
-        '/home': (context) => const MainScreen(),
+        LoginScreen.routeName: (context) => const LoginScreen(),
+        RegisterScreen.routeName: (context) => const RegisterScreen(),
+        ShoppingCartScreen.routeName: (context) => const ShoppingCartScreen(),
+        MainScreen.routeName: (context) => const MainScreen(),
+        // You can keep other routes here or manage them with onGenerateRoute
         '/profile': (context) => const ProfilePage(),
         '/invoices': (context) => const BookingHistoryPage(),
         '/planner': (context) => const TripPlannerPage(),
@@ -236,26 +235,11 @@ class MyApp extends StatelessWidget {
         '/evaluations': (context) => const ReviewsPage(),
         '/events': (context) => const EventsPage(),
         '/notifications': (context) =>  NotificationsPage(),
-        '/city-guide': (context) => const CityGuidePage(), // Changed to lowercase for consistency
+        '/city-guide': (context) => const CityGuidePage(),
       },
 
       onGenerateRoute: (settings) {
-        // Example for dynamic routes (e.g., details pages)
-        // if (settings.name?.startsWith('/hotels/') == true) {
-        //   final id = int.tryParse(settings.name!.split('/').last);
-        //   if (id != null) {
-        //     return MaterialPageRoute(builder: (context) => HotelDetailsPage(hotelId: id));
-        //   }
-        // }
-        // For /evaluations with targetType and targetId
-        // if (settings.name == '/evaluations_for_item') {
-        //   final args = settings.arguments as Map<String, dynamic>;
-        //   return MaterialPageRoute(builder: (context) => ReviewsPage(
-        //     targetType: args['targetType'] as String,
-        //     targetId: args['targetId'] as int,
-        //   ));
-        // }
-        
+        // This can be used for more complex routing logic if needed
         return null;
       },
     );
