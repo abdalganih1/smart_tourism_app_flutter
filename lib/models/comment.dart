@@ -81,7 +81,7 @@ class Comment {
       id: json['id'],
       userId: json['user_id'],
       targetType: json['target_type'],
-      targetId: json['target_id'],
+      targetId: int.parse(json['target_id'].toString()),
       parentCommentId: json['parent_comment_id'],
       content: json['content'],
       createdAt: DateTime.parse(json['created_at']),

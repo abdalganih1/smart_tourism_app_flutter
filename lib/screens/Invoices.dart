@@ -436,7 +436,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'الإجمالي: ${booking.totalAmount?.toStringAsFixed(2) ?? 'غير محدد'} SYP',
+                'الإجمالي: ${booking.totalAmount != null ? booking.totalAmount!.toStringAsFixed(2) : 'غير محدد'} ل.س',
                 style: textTheme.headlineSmall?.copyWith(
                   color: kAccentColor,
                   fontWeight: FontWeight.bold,
@@ -561,7 +561,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${order.items?.length ?? 0} عنصر', // Null-safe length
+                        '${order.items?.length ?? 0} عناصر', // Null-safe length
                         style: textTheme.bodyMedium?.copyWith(
                           color: kSecondaryTextColor,
                         ),
@@ -594,7 +594,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'الإجمالي: ${order.totalAmount?.toStringAsFixed(2) ?? 'غير محدد'} SYP',
+                'الإجمالي: ${order.totalAmount != null ? order.totalAmount!.toStringAsFixed(2) : 'غير محدد'} ل.س',
                 style: textTheme.headlineSmall?.copyWith(
                   color: kAccentColor,
                   fontWeight: FontWeight.bold,
@@ -609,8 +609,8 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('تم تنزيل الفاتورة'),
-                        backgroundColor: kSuccessColor,
+                        content: Text('سيتم تنفيذ هذه الميزة قريباً'),
+                        backgroundColor: kAccentColor,
                       ),
                     );
                     // TODO: Implement actual invoice download logic
@@ -761,7 +761,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                 _buildDialogInfoRow(
                   textTheme,
                   'المبلغ الإجمالي:',
-                  '${booking.totalAmount?.toStringAsFixed(2) ?? 'غير محدد'} SYP',
+                  '${booking.totalAmount != null ? booking.totalAmount!.toStringAsFixed(2) : 'غير محدد'} ل.س',
                 ),
                 if (booking.specialRequests != null &&
                     booking.specialRequests!.isNotEmpty)
@@ -804,7 +804,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
             borderRadius: BorderRadius.circular(20),
           ),
           title: Text(
-            'تفاصيل طلب المنتج',
+            'تفاصيل الطلب',
             style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
@@ -831,7 +831,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                 _buildDialogInfoRow(
                   textTheme,
                   'المبلغ الإجمالي:',
-                  '${order.totalAmount?.toStringAsFixed(2) ?? 'غير محدد'} SYP',
+                  '${order.totalAmount != null ? order.totalAmount!.toStringAsFixed(2) : 'غير محدد'} ل.س',
                 ),
                 const Divider(height: 20, thickness: 0.5),
                 Text(
@@ -842,14 +842,14 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                 ),
                 _buildDialogInfoRow(
                   textTheme,
-                  'العنوان 1:',
+                  'العنوان الأول:',
                   order.shippingAddressLine1 ?? 'غير متوفر',
                 ),
                 if (order.shippingAddressLine2 != null &&
                     order.shippingAddressLine2!.isNotEmpty)
                   _buildDialogInfoRow(
                     textTheme,
-                    'العنوان 2:',
+                    'العنوان الثاني:',
                     order.shippingAddressLine2!,
                   ),
                 _buildDialogInfoRow(
@@ -889,7 +889,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                                 ),
                               ),
                               Text(
-                                '${(item.priceAtPurchase ?? 0) * item.quantity} SYP',
+                                '${(item.priceAtPurchase ?? 0) * item.quantity} ل.س',
                                 style: textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),

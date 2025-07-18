@@ -18,7 +18,7 @@ class Product {
   final ProductCategory? category;
   final User? seller;
 
-  final DateTime createdAt;
+  final DateTime? createdAt;
   final DateTime? updatedAt; // يمكن أن يكون null في بعض الحالات
 
   Product({
@@ -33,7 +33,7 @@ class Product {
     this.galleryImageUrls,
     this.category,
     this.seller,
-    required this.createdAt,
+    this.createdAt,
     this.updatedAt,
   });
 
@@ -94,7 +94,7 @@ class Product {
       seller: json.containsKey('seller') && json['seller'] != null
           ? User.fromJson(json['seller'] as Map<String, dynamic>)
           : null,
-      createdAt: parseDate(json['created_at'])!, // <<< FIX: Use parseDate helper
+      createdAt: parseDate(json['created_at']), // <<< FIX: Use parseDate helper
       updatedAt: parseDate(json['updated_at']), // <<< FIX: Use parseDate helper
     );
   }

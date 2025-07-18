@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_tourism_app/repositories/interaction_repository.dart'; // Make sure this is imported
 import 'package:smart_tourism_app/repositories/tourism_repository.dart';
+import 'package:smart_tourism_app/screens/TouristSiteDetailsPage.dart';
 import 'package:smart_tourism_app/utils/api_exceptions.dart';
 import 'package:smart_tourism_app/models/favorite.dart';
 import 'package:smart_tourism_app/models/pagination.dart';
@@ -257,26 +258,29 @@ class _FavoritesPageState extends State<FavoritesPage> {
     }
 
     // Display the list of favorite items
-    return ListView.builder(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(16.0),
-      // Add 1 to itemCount if more data can be loaded to show a loading indicator at the bottom
-      itemCount: _favoritesResponse!.data.length + (_canLoadMore && !_isLoading ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (index < _favoritesResponse!.data.length) {
-          final favorite = _favoritesResponse!.data[index];
-          return FavoriteItemCard(
-            favoriteItem: favorite,
-            onRemove: () => _removeFavorite(favorite),
-          );
-        } else {
-          // Show circular progress indicator when loading more data
-          return const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Center(child: CircularProgressIndicator(color: kPrimaryColor)),
-          );
-        }
-      },
+    return RefreshIndicator(
+      onRefresh: () => _fetchFavorites(isRefresh: true),
+      child: ListView.builder(
+        controller: _scrollController,
+        padding: const EdgeInsets.all(16.0),
+        // Add 1 to itemCount if more data can be loaded to show a loading indicator at the bottom
+        itemCount: _favoritesResponse!.data.length + (_canLoadMore && !_isLoading ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index < _favoritesResponse!.data.length) {
+            final favorite = _favoritesResponse!.data[index];
+            return FavoriteItemCard(
+              favoriteItem: favorite,
+              onRemove: () => _removeFavorite(favorite),
+            );
+          } else {
+            // Show circular progress indicator when loading more data
+            return const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Center(child: CircularProgressIndicator(color: kPrimaryColor)),
+            );
+          }
+        },
+      ),
     );
   }
 }
@@ -370,6 +374,23 @@ class FavoriteItemCard extends StatelessWidget {
     required this.onRemove,
   });
 
+  void _navigateToDetails(BuildContext context) {
+    if (favoriteItem.targetType == 'TouristSite') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TouristSiteDetailsPage(siteId: favoriteItem.targetId),
+        ),
+      );
+    } else {
+      // Handle other types or show a message
+      final itemDetails = getItemDisplayDetails(favoriteItem.target, favoriteItem.targetType);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('التفاصيل غير متاحة حالياً لـ: ${itemDetails.title}')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -384,12 +405,7 @@ class FavoriteItemCard extends StatelessWidget {
       elevation: 4,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () {
-          // TODO: Navigate to the details page of the specific item type
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('فتح تفاصيل: ${itemDetails.title}')),
-          );
-        },
+        onTap: () => _navigateToDetails(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -468,11 +484,7 @@ class FavoriteItemCard extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('عرض تفاصيل: ${itemDetails.title}')),
-                    );
-                  },
+                  onPressed: () => _navigateToDetails(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kPrimaryColor,
                     foregroundColor: Colors.white,

@@ -420,13 +420,20 @@ class _TouristSiteDetailsPageState extends State<TouristSiteDetailsPage> {
 
     try {
       final interactionRepo = Provider.of<InteractionRepository>(context, listen: false);
-      // The addComment method should return the newly created comment object or confirmation
-      final newCommentData = await interactionRepo.addComment({
+      
+      // Build the request body
+      final Map<String, dynamic> commentData = {
         'target_type': TargetTypes.touristSite,
         'target_id': _site!.id!,
         'content': _commentTextController.text.trim(),
-        'parent_comment_id': _replyToCommentId,
-      });
+      };
+
+      // Only add parent_comment_id if it's not null
+      if (_replyToCommentId != null) {
+        commentData['parent_comment_id'] = _replyToCommentId;
+      }
+
+      final newCommentData = await interactionRepo.addComment(commentData);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

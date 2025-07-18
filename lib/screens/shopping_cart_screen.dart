@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_tourism_app/models/shopping_cart_item.dart';
 import 'package:smart_tourism_app/repositories/shopping_cart_repository.dart';
 import 'package:smart_tourism_app/widgets/cart_item_widget.dart';
@@ -15,11 +16,44 @@ class ShoppingCartScreen extends StatefulWidget {
 
 class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
   late Future<List<ShoppingCartItem>> _cartItemsFuture;
+  final _formKey = GlobalKey<FormState>();
+  final _addressLine1Controller = TextEditingController();
+  final _addressLine2Controller = TextEditingController();
+  final _cityController = TextEditingController();
+  final _countryController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _loadCartItems();
+    _loadSavedAddress();
+  }
+
+  @override
+  void dispose() {
+    _addressLine1Controller.dispose();
+    _addressLine2Controller.dispose();
+    _cityController.dispose();
+    _countryController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadSavedAddress() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _addressLine1Controller.text = prefs.getString('shipping_address_line1') ?? '';
+      _addressLine2Controller.text = prefs.getString('shipping_address_line2') ?? '';
+      _cityController.text = prefs.getString('shipping_city') ?? '';
+      _countryController.text = prefs.getString('shipping_country') ?? '';
+    });
+  }
+
+  Future<void> _saveAddress() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('shipping_address_line1', _addressLine1Controller.text);
+    await prefs.setString('shipping_address_line2', _addressLine2Controller.text);
+    await prefs.setString('shipping_city', _cityController.text);
+    await prefs.setString('shipping_country', _countryController.text);
   }
 
   void _loadCartItems() {
@@ -31,32 +65,124 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
 
   void _updateItemQuantity(int cartItemId, int newQuantity) async {
     try {
-      final cartRepo = Provider.of<ShoppingCartRepository>(context, listen: false);
+      final cartRepo =
+          Provider.of<ShoppingCartRepository>(context, listen: false);
       await cartRepo.updateCartItemQuantity(cartItemId, newQuantity);
       _loadCartItems(); // Refresh the cart
     } catch (e) {
-      _showErrorSnackBar('Failed to update quantity: ${e.toString()}');
+      _showErrorSnackBar('فشل تحديث الكمية: ${e.toString()}');
     }
   }
 
   void _removeItem(int cartItemId) async {
     try {
-      final cartRepo = Provider.of<ShoppingCartRepository>(context, listen: false);
+      final cartRepo =
+          Provider.of<ShoppingCartRepository>(context, listen: false);
       await cartRepo.removeCartItem(cartItemId);
       _loadCartItems(); // Refresh the cart
     } catch (e) {
-      _showErrorSnackBar('Failed to remove item: ${e.toString()}');
+      _showErrorSnackBar('فشل إزالة العنصر: ${e.toString()}');
     }
   }
 
   void _clearCart() async {
     try {
-      final cartRepo = Provider.of<ShoppingCartRepository>(context, listen: false);
+      final cartRepo =
+          Provider.of<ShoppingCartRepository>(context, listen: false);
       await cartRepo.clearMyCart();
       _loadCartItems(); // Refresh the cart
     } catch (e) {
-      _showErrorSnackBar('Failed to clear cart: ${e.toString()}');
+      _showErrorSnackBar('فشل تفريغ السلة: ${e.toString()}');
     }
+  }
+
+  Future<void> _placeOrder() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    // Save address for next time
+    await _saveAddress();
+
+    final shippingAddress = {
+      'shipping_address_line1': _addressLine1Controller.text,
+      'shipping_address_line2': _addressLine2Controller.text,
+      'shipping_city': _cityController.text,
+      'shipping_country': _countryController.text,
+      'shipping_postal_code': '12341', // Hardcoded postal code
+    };
+
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      final cartRepo =
+          Provider.of<ShoppingCartRepository>(context, listen: false);
+      await cartRepo.placeOrder(shippingAddress);
+
+      Navigator.of(context).pop(); // Close loading indicator
+      Navigator.of(context).pop(); // Close checkout dialog
+
+      _showSuccessSnackBar('تم إرسال الطلب بنجاح!');
+      _loadCartItems(); // Refresh cart, which should be empty now
+    } catch (e) {
+      Navigator.of(context).pop(); // Close loading indicator
+      _showErrorSnackBar('فشل إرسال الطلب: ${e.toString()}');
+    }
+  }
+
+  void _showCheckoutDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('عنوان الشحن'),
+        content: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: _addressLine1Controller,
+                  decoration:
+                      const InputDecoration(labelText: 'العنوان الأول'),
+                  // Validator is removed to make it optional
+                ),
+                TextFormField(
+                  controller: _addressLine2Controller,
+                  decoration:
+                      const InputDecoration(labelText: 'العنوان الثاني (اختياري)'),
+                ),
+                TextFormField(
+                  controller: _cityController,
+                  decoration: const InputDecoration(labelText: 'المدينة'),
+                   // Validator is removed to make it optional
+                ),
+                TextFormField(
+                  controller: _countryController,
+                  decoration: const InputDecoration(labelText: 'البلد'),
+                   // Validator is removed to make it optional
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: const Text('إلغاء'),
+            onPressed: () => Navigator.of(ctx).pop(),
+          ),
+          ElevatedButton(
+            onPressed: _placeOrder,
+            child: const Text('إتمام الطلب'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showErrorSnackBar(String message) {
@@ -65,6 +191,16 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
       SnackBar(
         content: Text(message),
         backgroundColor: Theme.of(context).colorScheme.error,
+      ),
+    );
+  }
+
+    void _showSuccessSnackBar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green,
       ),
     );
   }
@@ -80,24 +216,26 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Shopping Cart'),
+        title: const Text('سلة التسوق'),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_sweep_outlined),
+            tooltip: 'تفريغ السلة',
             onPressed: () {
               // Show confirmation dialog before clearing
               showDialog(
                 context: context,
                 builder: (ctx) => AlertDialog(
-                  title: const Text('Clear Cart?'),
-                  content: const Text('Are you sure you want to remove all items from your cart?'),
+                  title: const Text('تفريغ السلة؟'),
+                  content: const Text(
+                      'هل أنت متأكد أنك تريد إزالة جميع العناصر من سلتك؟'),
                   actions: [
                     TextButton(
-                      child: const Text('Cancel'),
+                      child: const Text('إلغاء'),
                       onPressed: () => Navigator.of(ctx).pop(),
                     ),
                     TextButton(
-                      child: const Text('Clear'),
+                      child: const Text('تفريغ'),
                       onPressed: () {
                         Navigator.of(ctx).pop();
                         _clearCart();
@@ -116,15 +254,16 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('خطأ: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey),
+                  Icon(Icons.shopping_cart_outlined,
+                      size: 80, color: Colors.grey),
                   SizedBox(height: 16),
-                  Text('Your cart is empty.', style: TextStyle(fontSize: 18)),
+                  Text('سلتك فارغة.', style: TextStyle(fontSize: 18)),
                 ],
               ),
             );
@@ -149,7 +288,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                   ),
                 ),
               ),
-              _buildTotalSection(totalPrice),
+              if (cartItems.isNotEmpty) _buildTotalSection(totalPrice),
             ],
           );
         },
@@ -176,10 +315,14 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Total:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const Text('الإجمالي:',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               Text(
-                '\$${totalPrice.toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
+                '${totalPrice.toStringAsFixed(2)} ل.س',
+                style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green),
               ),
             ],
           ),
@@ -187,10 +330,8 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                // Navigate to checkout screen
-              },
-              child: const Text('Proceed to Checkout'),
+              onPressed: _showCheckoutDialog,
+              child: const Text('المتابعة لإتمام الشراء'),
             ),
           ),
         ],

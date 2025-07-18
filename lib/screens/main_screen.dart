@@ -187,7 +187,10 @@ class _MainScreenState extends State<MainScreen> {
       child: Scaffold(
         // AppBar is now styled by the theme
         appBar: AppBar(
-          title: const Text('اكتشف سوريا'),
+          title: Image.asset(
+            'assets/ico.jpg',
+            height: 40,
+          ),
            leading: Builder( // Keep drawer button
              builder: (context) => IconButton(
                icon: const Icon(Icons.menu_rounded),
@@ -284,7 +287,7 @@ _buildDrawerItem(
   icon: Icons.shopping_bag_outlined,
   onTap: () => _navigateTo(context, const ProductsPage()),
 ),
-                                  _buildDrawerItem(context: context, title: ' ا��وجهات السياحية', icon: Icons.edit_calendar_outlined, onTap: () => _navigateTo(context,  const TouristSitesListPage())),
+                                  _buildDrawerItem(context: context, title: ' الوجهات السياحية', icon: Icons.edit_calendar_outlined, onTap: () => _navigateTo(context,  const TouristSitesListPage())),
 _buildDrawerItem(context: context, title: ' الفنادق ', icon: Icons.edit_calendar_outlined, onTap: () => _navigateTo(context, const HotelsPage())), // <<<--- تم فك تعليقها
 // <<<--- تم فك تعليقها
                  const Divider(indent: 20, endIndent: 20, thickness: 0.5),

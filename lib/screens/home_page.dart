@@ -975,7 +975,7 @@ class _HomePageState extends State<HomePage> {
         crossAxisCount: 2,
         crossAxisSpacing: 12.0,
         mainAxisSpacing: 16.0,
-        childAspectRatio: 0.8,
+        childAspectRatio: 0.7, // FIX: Increased card height to prevent overflow
       ),
       itemCount: hotels.length,
       itemBuilder: (context, index) {
@@ -1108,15 +1108,10 @@ class _HomePageState extends State<HomePage> {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 10,
-                  left: 12,
-                  right: 12,
-                  bottom: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Reverted to spaceBetween
                   children: [
                     Text(
                       title,
@@ -1127,6 +1122,7 @@ class _HomePageState extends State<HomePage> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    // Spacer removed
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

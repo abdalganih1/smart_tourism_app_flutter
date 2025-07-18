@@ -108,6 +108,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   const Spacer(),
+                  Image.asset(
+                    'assets/ico.jpg',
+                    height: 120,
+                    width: 120,
+                  ),
+                  const SizedBox(height: 20),
                   const Text(
                     'Welcome Back!',
                     style: TextStyle(

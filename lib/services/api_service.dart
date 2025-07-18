@@ -72,6 +72,11 @@ class ApiService {
       case 422:
         throw ValidationException(responseBody?['message'] ?? 'Validation Failed', responseBody?['errors']);
       case 500:
+        // Special handling for the toggle favorite endpoint
+        if (response.request?.url.path == '/favorites/toggle' && responseBody?['is_favorited'] == false) {
+          return Future.value(responseBody);
+        }
+        throw ServerErrorException(responseBody?['message'] ?? 'Server Error');
       default:
         throw ServerErrorException(responseBody?['message'] ?? 'Server Error');
     }
@@ -101,25 +106,32 @@ class ApiService {
     // Modify headers for form-urlencoded content type
     headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
+    dynamic requestBody = body;
+    if (body is Map) {
+      requestBody = body.map((key, value) => MapEntry(key, value.toString()));
+    }
+
+    http.Response response;
     try {
       // The body should be a Map<String, String> for this content type
-      final response = await http.post(
+      response = await http.post(
         uri,
         headers: headers,
-        body: body, // Send body directly without json.encode
+        body: requestBody, // Send body directly without json.encode
       );
-      // طباعة نص الاستجابة (JSON)
-      print('POST $path | Status: ${response.statusCode} | Body: ${response.body}');
-      
-      // Revert Content-Type to default for subsequent requests that might expect JSON
-      headers['Content-Type'] = 'application/json'; 
-
-      return _handleResponse(response);
     } catch (e) {
       // Revert Content-Type in case of error too
       headers['Content-Type'] = 'application/json';
       throw NetworkException("Failed to connect to the server: ${e.toString()}");
     }
+    
+    // طباعة نص الاستجابة (JSON)
+    print('POST $path | Status: ${response.statusCode} | Body: ${response.body}');
+    
+    // Revert Content-Type to default for subsequent requests that might expect JSON
+    headers['Content-Type'] = 'application/json'; 
+
+    return _handleResponse(response);
   }
 
   Future<dynamic> put(String path, dynamic body, {bool protected = false}) async {

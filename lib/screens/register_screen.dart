@@ -129,6 +129,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  Image.asset(
+                    'assets/ico.jpg',
+                    height: 120,
+                    width: 120,
+                  ),
+                  const SizedBox(height: 20),
                   const Text(
                     'Create Account',
                     style: TextStyle(

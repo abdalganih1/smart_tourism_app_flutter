@@ -55,4 +55,8 @@ class ShoppingCartRepository {
     // API endpoint /cart/clear (POST)
     await _apiService.post('/cart/clear', {}, protected: true); // Protected endpoint
   }
+
+  Future<void> placeOrder(Map<String, String> shippingAddress) async {
+    await _apiService.post('/orders', shippingAddress, protected: true);
+  }
 }

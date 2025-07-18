@@ -500,76 +500,78 @@ class HotelCard extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    hotel.name!,
-                    style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on, color: kSecondaryTextColor, size: 16),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          hotel.city ?? 'غير محدد',
-                          style: textTheme.bodySmall,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (hotel.starRating != null && hotel.starRating! > 0) // Only show if rating is positive
-                        RatingBarIndicator(
-                          rating: hotel.starRating!.toDouble(),
-                          itemBuilder: (context, index) => Icon(
-                            Icons.star_rounded,
-                            color: kAccentColor,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      hotel.name!,
+                      style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.location_on, color: kSecondaryTextColor, size: 16),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            hotel.city ?? 'غير محدد',
+                            style: textTheme.bodySmall,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          itemCount: 5,
-                          itemSize: 18.0,
-                          direction: Axis.horizontal,
-                        )
-                      else // Show "No rating" or a default if rating is 0 or null
-                        Text('لا يوجد تقييم', style: textTheme.bodySmall?.copyWith(color: kSecondaryTextColor)),
-                      
-                      Text(
-                        displayPrice != null
-                            ? '${displayPrice.toStringAsFixed(0)} SYP / ليلة'
-                            : 'غير متوفر',
-                        style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: kPrimaryColor),
-                        textAlign: TextAlign.end,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Center(
-                    child: SizedBox(
-                      width: double.infinity, // Make button fill width
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Navigate to HotelDetailsPage
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => HotelDetailsPage(hotelId: hotel.id)));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
                         ),
-                        child: Text('احجز الآن', style: textTheme.labelLarge),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (hotel.starRating != null && hotel.starRating! > 0) // Only show if rating is positive
+                          RatingBarIndicator(
+                            rating: hotel.starRating!.toDouble(),
+                            itemBuilder: (context, index) => Icon(
+                              Icons.star_rounded,
+                              color: kAccentColor,
+                            ),
+                            itemCount: 5,
+                            itemSize: 18.0,
+                            direction: Axis.horizontal,
+                          )
+                        else // Show "No rating" or a default if rating is 0 or null
+                          Text('لا يوجد تقييم', style: textTheme.bodySmall?.copyWith(color: kSecondaryTextColor)),
+                        
+                        Text(
+                          displayPrice != null
+                              ? '${displayPrice.toStringAsFixed(0)} SYP / ليلة'
+                              : 'غير متوفر',
+                          style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: kPrimaryColor),
+                          textAlign: TextAlign.end,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Center(
+                      child: SizedBox(
+                        width: double.infinity, // Make button fill width
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Navigate to HotelDetailsPage
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => HotelDetailsPage(hotelId: hotel.id)));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                          ),
+                          child: Text('احجز الآن', style: textTheme.labelLarge),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

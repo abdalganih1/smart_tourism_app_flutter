@@ -1,4 +1,40 @@
-ضمن صفحة المنتج
- POST /cart/add | Status: 500 | Body: {"message":"Failed to add product to cart. Please try again."}
- بعد الاضافة الى السلة
- product_details_page.dart
+ضمن الصفحة
+PlaceDetailsPage.dart
+
+بعد اضافة تجربة
+
+أريد ان يتم اعادة تحديث الصفحة 
+
+بدلاً من محاولة قراءة التجربة
+
+
+او جد لي حلاً لمشكلة NULL TYPE IS NOT TYPE FROM STRING ...
+
+
+علماً ان السجل  لدي يقول
+
+ MULTIPART POST /my-experiences | Status: 201 | Body: {"data":{"id":8,"user_id":2,"site_id":"17","title":"\u062a\u062c\u0631\u0628\u062a\u064a \u0631\u0627\u0626\u0639\u0629","content":"\u0645\u062d\u062a\u0648\u0649 \u0644\u0644\u062a\u062c\u0631\u0628\u0629 \u0627\u0644\u0631\u0627\u0626\u0639\u0629","visit_date":null,"photo_url":"https:\/\/lightyellow-porcupine-230777.hostingersite.com\/public\/storage\/experience_photos\/r7DUhJGQzKS5QMtRBQWP0oc2dLecRP5PoxsK7QuZ.jpg","created_at":"2025-07-18T06:06:35.000000Z","updated_at":"2025-07-18T06:06:35.000000Z","user":{"id":2,"username":"tourist1","email":"tourist1@app.com","user_type":"Tourist","is_active":true,"created_at":"2025-05-20T16:16:15.000000Z","updated_at":"2025-05-20T16:16:15.000000Z","profile":{"first_name":"SRM","last_name":"hama","father_name":null,"mother_name":null,"passport_image_url":null,"bio":"pa","profile_picture_url":"\/storage\/profile_pictures\/WjldN5mgc59rulWuxL06cC1ru2EeT8J67q8h2DCq.jpg","updated_at":"2025-07-07T11:07:15.000000Z"}},"site":
+344
+E/gralloc4( 1352): Empty SMPTE 2094-40 data
+D/MIUIInput( 1352): [KeyEvent] ViewRootImpl windowName 'com.example.smart_tourism_app/com.example.smart_tourism_app.MainActivity', KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_BACK, scanCode=0, metaState=0, flags=0x48, repeatCount=0, eventTime=688106540000000, downTime=688106540000000, deviceId=-1, source=0x101, displayId=0 }, phoneEventTime=٠٩:٠٧:٠٤.١٦٧
+E/gralloc4( 1352): Empty SMPTE 2094-40 data
+D/MIUIInput( 1352): [KeyEvent] ViewRootImpl windowName 'com.example.smart_tourism_app/com.example.smart_tourism_app.MainActivity', KeyEvent { action=ACTION_UP, keyCode=KEYCODE_BACK, scanCode=0, metaState=0, flags=0x48, repeatCount=0, eventTime=688106615000000, downTime=688106540000000, deviceId=-1, source=0x101, displayId=0 }, phoneEventTime=٠٩:٠٧:٠٤.٢٤٣
+14
+E/gralloc4( 1352): Empty SMPTE 2094-40 data
+I/flutter ( 1352): Tapped on destination: الغابة الاستوائية
+W/OnBackInvokedCallback( 1352): OnBackInvokedCallback is not enabled for the application.
+W/OnBackInvokedCallback( 1352): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+40
+E/gralloc4( 1352): Empty SMPTE 2094-40 data
+I/flutter ( 1352): GET /user | Status: 200 | Body: {"data":{"id":2,"username":"tourist1","email":"tourist1@app.com","user_type":"Tourist","is_active":true,"created_at":"2025-05-20T16:16:15.000000Z","updated_at":"2025-05-20T16:16:15.000000Z","profile":{"first_name":"SRM","last_name":"hama","father_name":null,"mother_name":null,"passport_image_url":null,"bio":"pa","profile_picture_url":"\/storage\/profile_pictures\/WjldN5mgc59rulWuxL06cC1ru2EeT8J67q8h2DCq.jpg","updated_at":"2025-07-07T11:07:15.000000Z"}}}
+48
+E/gralloc4( 1352): Empty SMPTE 2094-40 data
+I/flutter ( 1352): GET /tourist-sites/17 | Status: 200 | Body: {"data":{"id":17,"name":"\u0627\u0644\u063a\u0627\u0628\u0629 \u0627\u0644\u0627\u0633\u062a\u0648\u0627\u0626\u064a\u0629","description":"- \u0627\u0644\u062a\u062c\u0631\u0628\u0629:\r\n\r\n\u00a0 - \u062a\u0630\u0648\u0642 \u0641\u0648\u0627\u0643\u0647 \u0627\u0633\u062a\u0648\u0627\u0626\u064a\u0629.\r\n\r\n- \u0627\u0644\u062a\u0643\u0644\u0641\u0629:\r\n\r\n\u00a0 - \u062f\u062e\u0648\u0644: 10,000 \u0644.\u0633 (\u062a\u0634\u0645\u0644 \u0639\u0635\u064a\u0631).\r\n\r\n\u062a\u0646\u0642\u0644\u0643 \u0628\u0642\u0639\u0629 \u0633\u0627\u062d\u0631\u0629 \u0628\u0645\u0633\u0627\u062d\u0629 8 \u0622\u0644\u0627\u0641 \u0645\u062a\u0631 \u0645\u0631\u0628\u0639 \u0645\u0646 \u0632\u062d\u0627\u0645 \u0627\u0644\u0633\u064a\u0627\u0631\u0627\u062a \u0648\u062f\u062e\u0627\u0646\u0647\u0627 \u0625\u0644\u0649 \u0627\u0644\u0637\u0628\u064a\u0639\u0629\u060c \u0641\u064a \u0631\u062d\u0644\u0629 \u0623\u0634\u0628\u0647 \u0628\u0627\u0644\u0645\u063a\u0627\u06
+45
+E/gralloc4( 1352): Empty SMPTE 2094-40 data
+I/flutter ( 1352): GET /tourist-sites/17/experiences | Status: 200 | Body: {"data":[{"id":8,"user_id":2,"site_id":17,"title":"\u062a\u062c\u0631\u0628\u062a\u064a \u0631\u0627\u0626\u0639\u0629","content":"\u0645\u062d\u062a\u0648\u0649 \u0644\u0644\u062a\u062c\u0631\u0628\u0629 \u0627\u0644\u0631\u0627\u0626\u0639\u0629","visit_date":null,"photo_url":"https:\/\/lightyellow-porcupine-230777.hostingersite.com\/public\/storage\/experience_photos\/r7DUhJGQzKS5QMtRBQWP0oc2dLecRP5PoxsK7QuZ.jpg","created_at":"2025-07-18T06:06:35.000000Z","updated_at":"2025-07-18T06:06:35.000000Z","user":{"id":2,"username":"tourist1","email":"tourist1@app.com","user_type":"Tourist","is_active":true,"created_at":"2025-05-20T16:16:15.000000Z","updated_at":"2025-05-20T16:16:15.000000Z","profile":{"first_name":"SRM","last_name":"hama","father_name":null,"mother_name":null,"passport_image_url":null,"bio":"pa","profile_picture_url":"\/storage\/profile_pictures\/WjldN5mgc59rulWuxL06cC1ru2EeT8J67q8h2DCq.jpg","updated_at":"2025-07-07T11:07:15.000000Z"}}}],"li
+I/flutter ( 1352): GET /tourist-sites/17/comments | Status: 200 | Body: {"data":[{"id":28,"user_id":2,"target_type":"TouristSite","target_id":17,"parent_comment_id":null,"content":"\u062a\u062c\u0631\u0628\u0629","created_at":"2025-07-10T08:00:37.000000Z","updated_at":"2025-07-10T08:00:37.000000Z","user":{"id":2,"username":"tourist1","email":"tourist1@app.com","user_type":"Tourist","is_active":true,"created_at":"2025-05-20T16:16:15.000000Z","updated_at":"2025-05-20T16:16:15.000000Z","profile":{"first_name":"SRM","last_name":"hama","father_name":null,"mother_name":null,"passport_image_url":null,"bio":"pa","profile_picture_url":"\/storage\/profile_pictures\/WjldN5mgc59rulWuxL06cC1ru2EeT8J67q8h2DCq.jpg","updated_at":"2025-07-07T11:07:15.000000Z"}},"replies":[]},{"id":39,"user_id":2,"target_type":"TouristSite","target_id":17,"parent_comment_id":null,"content":"\u062a\u062c\u0631\u064a\u0628 \u0627\u0644\u062a\u0639\u0644\u064a\u0642","created_at":"2025-07-18T06:05:52.000000Z","updated_at":"2025-07-18T06:05:52.000000Z","user":{"id"
+I/flutter ( 1352): GET /tourist-sites/17/ratings | Status: 200 | Body: {"data":[{"id":4,"user_id":2,"target_type":"TouristSite","target_id":17,"rating_value":2,"review_title":"good","review_text":"good","created_at":"2025-07-18T06:05:42.000000Z","updated_at":"2025-07-18T06:05:42.000000Z","user":{"id":2,"username":"tourist1","email":"tourist1@app.com","user_type":"Tourist","is_active":true,"created_at":"2025-05-20T16:16:15.000000Z","updated_at":"2025-05-20T16:16:15.000000Z","profile":{"first_name":"SRM","last_name":"hama","father_name":null,"mother_name":null,"passport_image_url":null,"bio":"pa","profile_picture_url":"\/storage\/profile_pictures\/WjldN5mgc59rulWuxL06cC1ru2EeT8J67q8h2DCq.jpg","updated_at":"2025-07-07T11:07:15.000000Z"}}}],"links":{"first":"https:\/\/lightyellow-porcupine-230777.hostingersite.com\/api\/tourist-sites\/17\/ratings?page=1","last":"https:\/\/lightyellow-porcupine-230777.hostingersite.com\/api\/tourist-sites\/17\/ratings?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,
+I/flutter ( 1352): GET /my-favorites | Status: 200 | Body: {"data":[{"id":null,"user_id":2,"target_type":"TouristSite","target_id":12,"added_at":"2025-07-18T05:36:54.000000Z","target":{"id":12,"name":"(\u0643\u0648\u062a \u062f\u0627\u0632\u0648\u0631 (\u0627\u0644\u0634\u0627\u0637\u0626 \u0627\u0644\u0623\u0632\u0631\u0642","description":"- \u0627\u0644\u0625\u0642\u0627\u0645\u0629:\r\n\r\n\u00a0 - \u063a\u0631\u0641 \u0645\u0646 220,000 \u0644.\u0633\/\u0644\u064a\u0644\u0629.\r\n\r\n-\u0627\u0644\u062d\u062c\u0632:\r\n\r\n\u00a0 \u0639\u0628\u0631 \u0627\u0644\u0647\u0627\u062a\u0641.\r\n\r\n- \u0645\u0645\u064a\u0632\u0627\u062a:\r\n\r\n\u00a0 - \u0642\u0631\u0628 \u0645\u0648\u0642\u0639 \u0631\u0623\u0633 \u0627\u0628\u0646 \u0647\u0627\u0646\u064a \u0627\u0644\u0623\u062b\u0631\u064a.\r\n\r\n\u00a0 - \u062d\u0641\u0644\u0627\u062a \u063a\u0631\u0648\u0628 \u0634\u0645\u0633.","location_text":"\u0668-\u0643\u0645 \u0634\u0645\u0627\u0644 \u0627\u0644\u0627\u0630\u0642\u064a\u0629","latitude":null,"longitude":null,"city
+
+
